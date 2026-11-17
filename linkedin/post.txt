@@ -1,0 +1,23 @@
+Can a network promise that your data will arrive on time, every time?
+
+For our Computer Networks (CS3001) research-paper analysis at IIITDM Kancheepuram, we studied HOP (Chiariotti et al., IEEE/ACM Transactions on Networking, 2021). HOP is a multipath transport protocol that sends packet-level FEC across WiFi, LTE and mmWave paths so that each data block arrives within 35 ms with 98% reliability. That is the kind of guarantee AR and remote robotics need.
+
+Reading the paper wasn't enough for us, so we wrote our own simulator in Python, rebuilt HOP's scheduler (JUMP) and capacity estimator (SKIP), and ran 2,300+ simulations.
+
+What we found:
+
+🔹 A formula subtlety. Implemented literally, one equation in the paper (eq. 5) reports a 0% failure chance as soon as any redundancy is added. Under the paper's own model the exact term is λ(d+1) − λ(d), and it matches Monte Carlo to within 0.1 percentage points. HOP clearly works in the authors' results, so this is most likely a documentation slip. But anyone re-implementing it from the paper would get a scheduler that is far too optimistic.
+
+🔹 About 5,000× faster. The paper computes the failure probability by enumerating every delivery pattern, which grows exponentially with the number of paths. The same sum is a convolution, so it runs in polynomial time: 34 µs instead of 169 ms at 4 paths, with identical results. That makes HOP practical on phones with 3 to 6 interfaces.
+
+🔹 Graceful degradation. When the 98% target becomes unreachable, HOP adds maximum redundancy, which builds queues and makes the next block late too. Falling back to the best reachable target breaks that loop: in one scenario it kept 35.2 Mb/s of on-time goodput where the original collapsed to 0.8 Mb/s.
+
+🔹 Correlated paths. HOP assumes the paths fail independently. When they share a bottleneck, it promised 1.94% failures and delivered 2.86%. A one-factor correlation-aware model kept its promises calibrated.
+
+My biggest takeaway: re-implementing a paper teaches you far more than reading it. The protocol's core idea holds up well, and the interesting questions were in the details.
+
+Thanks to my teammates [tag teammates] and to our course instructor [tag instructor] for the guidance.
+
+Code and report: [link]
+
+#ComputerNetworks #Networking #5G #TransportProtocols #Research #Python #Simulation #IIITDM

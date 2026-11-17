@@ -1,0 +1,10 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Video recordings: each is over GitHub's 100 MB file limit
+*.mp4
+
+# The original IEEE paper: licensed download, redistribution not permitted
+The_HOP_Protocol_Reliable_Latency-Bounded_End-to-End_Multipath_Communication.pdf
